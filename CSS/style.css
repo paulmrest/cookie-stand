@@ -1,0 +1,8 @@
+.ulist {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+ul.ulist li {
+  padding-left: 2%;
+}
