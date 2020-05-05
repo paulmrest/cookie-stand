@@ -391,41 +391,16 @@ var limaStore = {
 
 //exectuable
 seattleStore.simulateCookiesPerHour();
-//START-CONSOLE-TESTING
-console.log(seattleStore.hoursOpen);
-console.log(seattleStore.customersPerHour);
-console.log(seattleStore.cookiesPurchPerHour);
-//END-CONSOLE-TESTING
 seattleStore.renderAsList();
 
 tokyoStore.simulateCookiesPerHour();
-//START-CONSOLE-TESTING
-console.log(tokyoStore.hoursOpen);
-console.log(tokyoStore.customersPerHour);
-console.log(tokyoStore.cookiesPurchPerHour);
-//END-CONSOLE-TESTING
 tokyoStore.renderAsList();
 
 dubaiStore.simulateCookiesPerHour();
-//START-CONSOLE-TESTING
-console.log(dubaiStore.hoursOpen);
-console.log(dubaiStore.customersPerHour);
-console.log(dubaiStore.cookiesPurchPerHour);
-//END-CONSOLE-TESTING
 dubaiStore.renderAsList();
 
 parisStore.simulateCookiesPerHour();
-//START-CONSOLE-TESTING
-console.log(parisStore.hoursOpen);
-console.log(parisStore.customersPerHour);
-console.log(parisStore.cookiesPurchPerHour);
-//END-CONSOLE-TESTING
 parisStore.renderAsList();
 
 limaStore.simulateCookiesPerHour();
-//START-CONSOLE-TESTING
-console.log(limaStore.hoursOpen);
-console.log(limaStore.customersPerHour);
-console.log(limaStore.cookiesPurchPerHour);
-//END-CONSOLE-TESTING
 limaStore.renderAsList();
