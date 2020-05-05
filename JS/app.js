@@ -23,45 +23,6 @@ var seattleStore = {
     }
   },
 
-  //takes a time in 24 hour format as an integer, like 1400, and returns an AM/PM 12 hour time, like 2 PM, as a string
-  convert24To12HrTime: function(hourTime24Hour) {
-    if (hourTime24Hour < 0 || hourTime24Hour > 2400)
-    {
-      return `${hourTime24Hour} is an invalid time`;
-    }
-    if (hourTime24Hour < 1200)
-    {
-      return `${hourTime24Hour / 100}am`;
-    }
-    else if (hourTime24Hour === 1200)
-    {
-      return `${hourTime24Hour / 100}pm`;
-    }
-    else
-    {
-      return `${(hourTime24Hour / 100) - 12}pm`;
-    }
-  },
-
-  // populateHoursOpenOld: function() {
-  //   for (var i = 0; i <= totalHoursOpen; i++)
-  //   {
-  //     var hourTime = 6 + i;
-  //     if (hourTime < 12)
-  //     {
-  //       this.hoursOpen.push(`${hourTime}am`);
-  //     }
-  //     else if (hourTime === 12)
-  //     {
-  //       this.hoursOpen.push(`${hourTime}pm`);
-  //     }
-  //     else
-  //     {
-  //       this.hoursOpen.push(`${hourTime - 12}pm`);
-  //     }
-  //   }
-  // },
-
   simulateCustPerHour: function() {
     //populate hours open
     this.populateHoursOpen();
@@ -101,7 +62,7 @@ var seattleStore = {
       var cookiesPurchInOneHour = this.cookiesPurchPerHour[i];
       totalCookieSales += cookiesPurchInOneHour;
       var oneHourCookieSalesListItem = document.createElement('li');
-      var currHour12HourTime = this.convert24To12HrTime(this.hoursOpen[i]);
+      var currHour12HourTime = convert24To12HrTime(this.hoursOpen[i]);
       oneHourCookieSalesListItem.appendChild(
         document.createTextNode(`${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
       storeListUlEl.appendChild(oneHourCookieSalesListItem);
@@ -122,21 +83,11 @@ var tokyoStore = {
   cookiesPurchPerHour: new Array(),
 
   populateHoursOpen: function() {
+    const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
     for (var i = 0; i <= totalHoursOpen; i++)
     {
-      var hourTime = 6 + i;
-      if (hourTime < 12)
-      {
-        this.hoursOpen.push(`${hourTime}am`);
-      }
-      else if (hourTime === 12)
-      {
-        this.hoursOpen.push(`${hourTime}pm`);
-      }
-      else
-      {
-        this.hoursOpen.push(`${hourTime - 12}pm`);
-      }
+      var hourTime = openingTime24Hr + (i * 100);
+      this.hoursOpen.push(hourTime);
     }
   },
 
@@ -179,8 +130,9 @@ var tokyoStore = {
       var cookiesPurchInOneHour = this.cookiesPurchPerHour[i];
       totalCookieSales += cookiesPurchInOneHour;
       var oneHourCookieSalesListItem = document.createElement('li');
+      var currHour12HourTime = convert24To12HrTime(this.hoursOpen[i]);
       oneHourCookieSalesListItem.appendChild(
-        document.createTextNode(`${this.hoursOpen[i]}: ${cookiesPurchInOneHour.toFixed()} cookies`));
+        document.createTextNode(`${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
       storeListUlEl.appendChild(oneHourCookieSalesListItem);
     }
     var totalCookieSalesListItem = document.createElement('li');
@@ -199,21 +151,11 @@ var dubaiStore = {
   cookiesPurchPerHour: new Array(),
 
   populateHoursOpen: function() {
+    const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
     for (var i = 0; i <= totalHoursOpen; i++)
     {
-      var hourTime = 6 + i;
-      if (hourTime < 12)
-      {
-        this.hoursOpen.push(`${hourTime}am`);
-      }
-      else if (hourTime === 12)
-      {
-        this.hoursOpen.push(`${hourTime}pm`);
-      }
-      else
-      {
-        this.hoursOpen.push(`${hourTime - 12}pm`);
-      }
+      var hourTime = openingTime24Hr + (i * 100);
+      this.hoursOpen.push(hourTime);
     }
   },
 
@@ -256,8 +198,9 @@ var dubaiStore = {
       var cookiesPurchInOneHour = this.cookiesPurchPerHour[i];
       totalCookieSales += cookiesPurchInOneHour;
       var oneHourCookieSalesListItem = document.createElement('li');
+      var currHour12HourTime = convert24To12HrTime(this.hoursOpen[i]);
       oneHourCookieSalesListItem.appendChild(
-        document.createTextNode(`${this.hoursOpen[i]}: ${cookiesPurchInOneHour.toFixed()} cookies`));
+        document.createTextNode(`${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
       storeListUlEl.appendChild(oneHourCookieSalesListItem);
     }
     var totalCookieSalesListItem = document.createElement('li');
@@ -276,21 +219,11 @@ var parisStore = {
   cookiesPurchPerHour: new Array(),
 
   populateHoursOpen: function() {
+    const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
     for (var i = 0; i <= totalHoursOpen; i++)
     {
-      var hourTime = 6 + i;
-      if (hourTime < 12)
-      {
-        this.hoursOpen.push(`${hourTime}am`);
-      }
-      else if (hourTime === 12)
-      {
-        this.hoursOpen.push(`${hourTime}pm`);
-      }
-      else
-      {
-        this.hoursOpen.push(`${hourTime - 12}pm`);
-      }
+      var hourTime = openingTime24Hr + (i * 100);
+      this.hoursOpen.push(hourTime);
     }
   },
 
@@ -333,8 +266,9 @@ var parisStore = {
       var cookiesPurchInOneHour = this.cookiesPurchPerHour[i];
       totalCookieSales += cookiesPurchInOneHour;
       var oneHourCookieSalesListItem = document.createElement('li');
+      var currHour12HourTime = convert24To12HrTime(this.hoursOpen[i]);
       oneHourCookieSalesListItem.appendChild(
-        document.createTextNode(`${this.hoursOpen[i]}: ${cookiesPurchInOneHour.toFixed()} cookies`));
+        document.createTextNode(`${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
       storeListUlEl.appendChild(oneHourCookieSalesListItem);
     }
     var totalCookieSalesListItem = document.createElement('li');
@@ -353,21 +287,11 @@ var limaStore = {
   cookiesPurchPerHour: new Array(),
 
   populateHoursOpen: function() {
+    const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
     for (var i = 0; i <= totalHoursOpen; i++)
     {
-      var hourTime = 6 + i;
-      if (hourTime < 12)
-      {
-        this.hoursOpen.push(`${hourTime}am`);
-      }
-      else if (hourTime === 12)
-      {
-        this.hoursOpen.push(`${hourTime}pm`);
-      }
-      else
-      {
-        this.hoursOpen.push(`${hourTime - 12}pm`);
-      }
+      var hourTime = openingTime24Hr + (i * 100);
+      this.hoursOpen.push(hourTime);
     }
   },
 
@@ -410,8 +334,9 @@ var limaStore = {
       var cookiesPurchInOneHour = this.cookiesPurchPerHour[i];
       totalCookieSales += cookiesPurchInOneHour;
       var oneHourCookieSalesListItem = document.createElement('li');
+      var currHour12HourTime = convert24To12HrTime(this.hoursOpen[i]);
       oneHourCookieSalesListItem.appendChild(
-        document.createTextNode(`${this.hoursOpen[i]}: ${cookiesPurchInOneHour.toFixed()} cookies`));
+        document.createTextNode(`${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
       storeListUlEl.appendChild(oneHourCookieSalesListItem);
     }
     var totalCookieSalesListItem = document.createElement('li');
@@ -420,6 +345,29 @@ var limaStore = {
   }
 };
 
+//utility functions
+/*
+takes a time in 24 hour format as an integer, like 1400, and returns an AM/PM 12 hour time,
+like 2 PM, as a string
+*/
+function convert24To12HrTime(hourTime24Hour) {
+  if (hourTime24Hour < 0 || hourTime24Hour > 2400)
+  {
+    return `${hourTime24Hour} is an invalid time`;
+  }
+  if (hourTime24Hour < 1200)
+  {
+    return `${hourTime24Hour / 100}am`;
+  }
+  else if (hourTime24Hour === 1200)
+  {
+    return `${hourTime24Hour / 100}pm`;
+  }
+  else
+  {
+    return `${(hourTime24Hour / 100) - 12}pm`;
+  }
+}
 
 //exectuable
 seattleStore.simulateCookiesPerHour();
