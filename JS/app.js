@@ -3,6 +3,9 @@
 const openingTime24Hr = 600; //6 am in 24 hour time
 const closingTime24Hr = 2000; //8 pm in 24 hour time
 
+//array to hold all cookieStore objects
+var allCookieStores = new Array();
+
 //constructor
 function CookieStore(storeLocation, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
   this.storeLocation = storeLocation;
@@ -17,7 +20,6 @@ function CookieStore(storeLocation, minCustPerHour, maxCustPerHour, avgCookiesPe
   this.populateHoursOpen();
   this.simulateCustPerHour();
   this.simulateCookiesPerHour();
-
 }
 
 CookieStore.prototype.populateHoursOpen = function() {
@@ -40,7 +42,7 @@ CookieStore.prototype.simulateCustPerHour = function() {
 CookieStore.prototype.simulateCookiesPerHour = function() {
   for (var i = 0; i < this.hoursOpen.length; i++)
   {
-    var cookiesInOneHour = this.customersPerHour[i] * this.avgCookiesPerSale;
+    var cookiesInOneHour = Math.round(this.customersPerHour[i] * this.avgCookiesPerSale);
     this.cookiesPurchPerHour.push(cookiesInOneHour);
     this.totalCookieSales += cookiesInOneHour;
   }
@@ -70,13 +72,13 @@ CookieStore.prototype.renderAsList = function() {
 
     oneHourCookieSalesListItem.appendChild(
       document.createTextNode(
-        `${currHour12HourTime}: ${cookiesPurchInOneHour.toFixed()} cookies`));
+        `${currHour12HourTime}: ${cookiesPurchInOneHour} cookies`));
     storeListUlEl.appendChild(oneHourCookieSalesListItem);
   }
 
   //add a final li element to report on the total cookie sales
   var totalCookieSalesListItem = document.createElement('li');
-  totalCookieSalesListItem.appendChild(document.createTextNode(`Total: ${this.totalCookieSales.toFixed()} cookies`));
+  totalCookieSalesListItem.appendChild(document.createTextNode(`Total: ${this.totalCookieSales} cookies`));
   storeListUlEl.appendChild(totalCookieSalesListItem);
 };
 
@@ -100,17 +102,18 @@ CookieStore.prototype.renderAsTable = function() {
   for (var i = 0; i < this.cookiesPurchPerHour.length; i++)
   {
     var cookieSalesForOneHourEl = document.createElement('td');
-    cookieSalesForOneHourEl.innerText = `${this.cookiesPurchPerHour[i].toFixed()}`;
+    cookieSalesForOneHourEl.innerText = `${this.cookiesPurchPerHour[i]}`;
     newElementParent.appendChild(cookieSalesForOneHourEl);
   }
 
   //insert a td for the total cookie sales
   var totalCookieSalesEl = document.createElement('td');
-  totalCookieSalesEl.innerText = `${this.totalCookieSales.toFixed()}`;
+  totalCookieSalesEl.innerText = `${this.totalCookieSales}`;
   newElementParent.appendChild(totalCookieSalesEl);
 };
 
 /*
+Renders the header row.
 When render is called on the first CookieStore object, this method creates the table element, the first tr element, the blank th element necessary for tables with column and row headers, and the hours open th elements.
 
 We are assuming that if the id sales-data-table is present, that this setup has been done.
@@ -152,6 +155,47 @@ CookieStore.prototype.insertInitialTableSetup = function() {
   }
 };
 
+//non-instance functions
+/*
+Renders the footer row.
+This function requires that all CookieStore objects that will be rendered are instantiated and added to the allCookieStores global array before rendering the table.
+*/
+function renderFooterRow() {
+  var newElementParent = document.getElementById('sales-data-table');
+  var totalsRowEl = document.createElement('tr');
+  totalsRowEl.setAttribute('id', 'hour-totals-row');
+  newElementParent.appendChild(totalsRowEl);
+
+  newElementParent = document.getElementById('hour-totals-row');
+  var totalsHeadEl = document.createElement('th');
+  totalsHeadEl.setAttribute('scope', 'row');
+  totalsHeadEl.innerText = 'Totals';
+  newElementParent.appendChild(totalsHeadEl);
+
+  var everyLocationHoursOpen = (closingTime24Hr - openingTime24Hr) / 100;
+  for (var i = 0; i <= everyLocationHoursOpen; i++)
+  {
+    var hourTotal = 0;
+    for (var j = 0; j < allCookieStores.length; j++)
+    {
+      // var currStoreCurrHourCookiesSold = allCookieStores[j].cookiesPurchPerHour[i];
+      var oneCookieStore = allCookieStores[j];
+      var currStoreCurrHourCookiesSold = oneCookieStore.cookiesPurchPerHour[i];
+      //START-CONSOLE-TESTING
+      console.log(`current hourTotal (${hourTotal}) + currStoreCurrHourCookiesSold (${currStoreCurrHourCookiesSold}) = ${hourTotal + currStoreCurrHourCookiesSold}`);
+      console.log('');
+      //END-CONSOLE-TESTING
+      hourTotal += currStoreCurrHourCookiesSold;
+    }
+    var totalTdEl = document.createElement('td');
+    totalTdEl.innerText = `${hourTotal}`;
+    newElementParent.appendChild(totalTdEl);
+  }
+
+  //empty td element at the end to fill out grid
+  newElementParent.appendChild(document.createElement('td'));
+}
+
 //utility functions
 /*
 takes a time in 24 hour format as an integer, like 1400, and returns an AM/PM 12 hour time,
@@ -178,16 +222,24 @@ function convert24To12HrTime(hourTime24Hour) {
 
 //executable from constructors
 var seattleStore = new CookieStore('Seattle', 25, 65, 6.3);
-seattleStore.renderAsTable();
+allCookieStores.push(seattleStore);
 
 var tokyoStore = new CookieStore('Tokyo', 3, 24, 1.2);
-tokyoStore.renderAsTable();
+allCookieStores.push(tokyoStore);
 
 var dubaiStore = new CookieStore('Dubai', 11, 38, 3.7);
-dubaiStore.renderAsTable();
+allCookieStores.push(dubaiStore);
 
 var parisStore = new CookieStore('Paris', 20, 38, 2.3);
-parisStore.renderAsTable();
+allCookieStores.push(parisStore);
 
 var limaStore = new CookieStore('Lima', 2, 16, 4.6);
+allCookieStores.push(limaStore);
+
+seattleStore.renderAsTable();
+tokyoStore.renderAsTable();
+dubaiStore.renderAsTable();
+parisStore.renderAsTable();
 limaStore.renderAsTable();
+
+renderFooterRow();
