@@ -1,14 +1,9 @@
 'use-strict';
 
-const openingTime24Hr = 600; //6 am in 24 hour time
-const closingTime24Hr = 2000; //8 pm in 24 hour time
-
-//array to hold all cookieStore objects
-var allCookieStores = new Array();
-
-//constructor
-function CookieStore(storeLocation, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
+//CookieStore constructor and methods
+function CookieStore(storeLocation, locationHoursOpen, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
   this.storeLocation = storeLocation;
+  this.locationHoursOpen = locationHoursOpen;
   this.minCustPerHour = minCustPerHour;
   this.maxCustPerHour = maxCustPerHour;
   this.avgCookiesPerSale = avgCookiesPerSale;
@@ -83,84 +78,134 @@ CookieStore.prototype.renderAsList = function() {
 };
 
 CookieStore.prototype.renderAsTable = function() {
-  this.insertInitialTableSetup();
+  //get pointer at table element
+  var tableEl = document.getElementById('sales-data-table');
 
-  //create next tr for store
-  var newElementParent = document.getElementById('sales-data-table');
+  //if necessary, create tbody element and append
+  var tableBodyEl;
+  if (!document.getElementById('sales-data-table-body'))
+  {
+    tableBodyEl = document.createElement('tbody');
+    tableBodyEl.setAttribute('id', 'sales-data-table-body');
+    tableEl.appendChild(tableBodyEl);
+  }
+  //else if it already exists, assign tableBodyEl pionter to it
+  else
+  {
+    tableBodyEl = document.getElementById('sales-data-table-body');
+  }
+
+  //create tr for this CookieStore and append
   var storeRowEl = document.createElement('tr');
   storeRowEl.setAttribute('id', `${this.storeLocation.toLowerCase()}-store-row`);
-  newElementParent.appendChild(storeRowEl);
+  tableBodyEl.appendChild(storeRowEl);
 
-  //create th for store
-  newElementParent = document.getElementById(`${this.storeLocation.toLowerCase()}-store-row`);
-  var storeRowHeader = document.createElement('th');
-  storeRowHeader.setAttribute('scope', 'row');
-  storeRowHeader.innerText = `${this.storeLocation}`;
-  newElementParent.appendChild(storeRowHeader);
+  //create th for this CookieStore and append
+  var storeRowHeaderEl = document.createElement('th');
+  storeRowHeaderEl.setAttribute('scope', 'row');
+  storeRowHeaderEl.innerText = `${this.storeLocation}`;
+  storeRowEl.appendChild(storeRowHeaderEl);
 
   //populate tr row for store with simulated cookie sales
   for (var i = 0; i < this.cookiesPurchPerHour.length; i++)
   {
     var cookieSalesForOneHourEl = document.createElement('td');
     cookieSalesForOneHourEl.innerText = `${this.cookiesPurchPerHour[i]}`;
-    newElementParent.appendChild(cookieSalesForOneHourEl);
+    storeRowEl.appendChild(cookieSalesForOneHourEl);
   }
 
   //insert a td for the total cookie sales
   var totalCookieSalesEl = document.createElement('td');
   totalCookieSalesEl.innerText = `${this.totalCookieSales}`;
-  newElementParent.appendChild(totalCookieSalesEl);
+  storeRowEl.appendChild(totalCookieSalesEl);
 };
 
-/*
-Renders the header row.
-When render is called on the first CookieStore object, this method creates the table element, the first tr element, the blank th element necessary for tables with column and row headers, and the hours open th elements.
+//HoursOpen constructor and methods
+function HoursOpen(openingTime24Hr, closingTime24Hr) {
+  this.openingTime24Hr = openingTime24Hr;
+  this.closingTime24Hr = closingTime24Hr;
+  this.hoursOpenArray = new Array();
+  this.populateHoursOpen();
+}
 
-We are assuming that if the id sales-data-table is present, that this setup has been done.
-*/
-CookieStore.prototype.insertInitialTableSetup = function() {
-  if (!document.getElementById('sales-data-table'))
+HoursOpen.prototype.populateHoursOpen = function() {
+  const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
+  for (var i = 0; i <= totalHoursOpen; i++)
   {
-    var newElementParent = document.getElementById('sales-data');
-    var tableEl = document.createElement('table');
-    tableEl.setAttribute('id', 'sales-data-table');
-    newElementParent.appendChild(tableEl);
-
-    //point newElementParent at the table element we just inserted
-    newElementParent = document.getElementById('sales-data-table');
-    var tableRowEl = document.createElement('tr');
-    tableRowEl.setAttribute('id', 'hours-open-tr');
-    newElementParent.appendChild(tableRowEl);
-
-    //point newElementParent at the table row we just inserted and add the blank th
-    newElementParent = document.getElementById('hours-open-tr');
-    var blankTableHeader = document.createElement('th');
-    blankTableHeader.setAttribute('id', 'blank-table-header');
-    newElementParent.appendChild(blankTableHeader);
-
-    //insert the th elements for the hours open
-    for (var i = 0; i < this.hoursOpen.length; i++)
-    {
-      var oneOpenHourEl = document.createElement('th');
-      oneOpenHourEl.setAttribute('scope', 'col');
-      oneOpenHourEl.innerText = convert24To12HrTime(this.hoursOpen[i]);
-      newElementParent.appendChild(oneOpenHourEl);
-    }
-
-    //insert a final th element for the total sales by location
-    var totalCookieSalesEl = document.createElement('th');
-    totalCookieSalesEl.setAttribute('id', 'total-sales');
-    totalCookieSalesEl.innerText = 'Daily Location Total';
-    newElementParent.appendChild(totalCookieSalesEl);
+    var hourTime = openingTime24Hr + (i * 100);
+    this.hoursOpenArray.push(hourTime);
   }
 };
 
+//class method
+HoursOpen.convert24To12HrTime = function(hourTime24Hour) {
+  if (hourTime24Hour < 0 || hourTime24Hour > 2400)
+  {
+    return `${hourTime24Hour} is an invalid time`;
+  }
+  if (hourTime24Hour < 1200)
+  {
+    return `${hourTime24Hour / 100}:00am`;
+  }
+  else if (hourTime24Hour === 1200)
+  {
+    return `${hourTime24Hour / 100}:00pm`;
+  }
+  else
+  {
+    return `${(hourTime24Hour / 100) - 12}:00pm`;
+  }
+};
+
+
 //non-instance functions
+/*
+Renders the header row using a HoursOpen object.
+*/
+function renderTableHeaderRow(hoursOpen) {
+  //create a pointer at sales-data element
+  var salesDataEl = document.getElementById('sales-data');
+
+  //create the table element and append it to sales-data element
+  var tableEl = document.createElement('table');
+  tableEl.setAttribute('id', 'sales-data-table');
+  salesDataEl.appendChild(tableEl);
+
+  //create the thead element and append it to the table
+  var tableHeadEl = document.createElement('thead');
+  tableEl.appendChild(tableHeadEl);
+
+  //create the table row element and append it to the table element
+  var tableRowEl = document.createElement('tr');
+  tableRowEl.setAttribute('id', 'hours-open-tr');
+  tableHeadEl.appendChild(tableRowEl);
+
+  //create a blank table header element and append it to the table row
+  var blankTableHeader = document.createElement('th');
+  blankTableHeader.setAttribute('id', 'blank-table-header');
+  tableRowEl.appendChild(blankTableHeader);
+
+  //create the th elements for each hoursOpen and append it to the table row
+  for (var i = 0; i < hoursOpen.hoursOpenArray.length; i++)
+  {
+    var oneOpenHourEl = document.createElement('th');
+    oneOpenHourEl.setAttribute('scope', 'col');
+    oneOpenHourEl.innerText = convert24To12HrTime(hoursOpen.hoursOpenArray[i]);
+    tableRowEl.appendChild(oneOpenHourEl);
+  }
+
+  //create a final th element for the Daily Location Totals column and append it the table row
+  var totalCookieSalesEl = document.createElement('th');
+  totalCookieSalesEl.setAttribute('id', 'total-sales');
+  totalCookieSalesEl.innerText = 'Daily Location Total';
+  tableRowEl.appendChild(totalCookieSalesEl);
+}
+
 /*
 Renders the footer row.
 This function requires that all CookieStore objects that will be rendered are instantiated and added to the allCookieStores global array before rendering the table.
 */
-function renderFooterRow() {
+function renderTableFooterRow() {
   var newElementParent = document.getElementById('sales-data-table');
   var totalsRowEl = document.createElement('tr');
   totalsRowEl.setAttribute('id', 'hour-totals-row');
@@ -214,20 +259,32 @@ function convert24To12HrTime(hourTime24Hour) {
   }
 }
 
-//executable from constructors
-var seattleStore = new CookieStore('Seattle', 25, 65, 6.3);
+//executables
+const openingTime24Hr = 600; //6 am in 24 hour time
+const closingTime24Hr = 2000; //8 pm in 24 hour time
+
+//array to hold all cookieStore objects
+var allCookieStores = new Array();
+
+//since all the branches have the same hours open, we can use the same HoursOpen object for every location
+var allLocationsHoursOpen = new HoursOpen(openingTime24Hr, closingTime24Hr);
+
+//use the above instantiated HoursOpen object to render the header row
+renderTableHeaderRow(allLocationsHoursOpen);
+
+var seattleStore = new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3);
 allCookieStores.push(seattleStore);
 
-var tokyoStore = new CookieStore('Tokyo', 3, 24, 1.2);
+var tokyoStore = new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2);
 allCookieStores.push(tokyoStore);
 
-var dubaiStore = new CookieStore('Dubai', 11, 38, 3.7);
+var dubaiStore = new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7);
 allCookieStores.push(dubaiStore);
 
-var parisStore = new CookieStore('Paris', 20, 38, 2.3);
+var parisStore = new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3);
 allCookieStores.push(parisStore);
 
-var limaStore = new CookieStore('Lima', 2, 16, 4.6);
+var limaStore = new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6);
 allCookieStores.push(limaStore);
 
 seattleStore.renderAsTable();
@@ -236,4 +293,4 @@ dubaiStore.renderAsTable();
 parisStore.renderAsTable();
 limaStore.renderAsTable();
 
-renderFooterRow();
+renderTableFooterRow();
