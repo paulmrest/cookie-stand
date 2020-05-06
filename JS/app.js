@@ -178,13 +178,7 @@ function renderFooterRow() {
     var hourTotal = 0;
     for (var j = 0; j < allCookieStores.length; j++)
     {
-      // var currStoreCurrHourCookiesSold = allCookieStores[j].cookiesPurchPerHour[i];
-      var oneCookieStore = allCookieStores[j];
-      var currStoreCurrHourCookiesSold = oneCookieStore.cookiesPurchPerHour[i];
-      //START-CONSOLE-TESTING
-      console.log(`current hourTotal (${hourTotal}) + currStoreCurrHourCookiesSold (${currStoreCurrHourCookiesSold}) = ${hourTotal + currStoreCurrHourCookiesSold}`);
-      console.log('');
-      //END-CONSOLE-TESTING
+      var currStoreCurrHourCookiesSold = allCookieStores[j].cookiesPurchPerHour[i];
       hourTotal += currStoreCurrHourCookiesSold;
     }
     var totalTdEl = document.createElement('td');
