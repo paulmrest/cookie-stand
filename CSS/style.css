@@ -6,3 +6,13 @@
 ul.ulist li {
   padding-left: 2%;
 }
+
+table#sales-data-table {
+  max-width: 80%;
+  margin: 10px auto;
+}
+
+table#sales-data-table th, td {
+  border: 1px solid black;
+  padding: 0.5em;
+}
