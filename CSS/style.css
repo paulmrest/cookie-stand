@@ -1,10 +1,62 @@
-.ulist {
-  list-style-type: disc;
-  list-style-position: inside;
+ /* {
+  outline: 1px solid black;
+  margin: 2px;
+  padding: 2px;
+}  */
+
+body {
+  font-family: 'Mukta', sans-serif;
+  max-width: 900px;
 }
 
-ul.ulist li {
-  padding-left: 2%;
+header {
+  text-align: center;
+  border-bottom: 50px solid green;
+}
+
+#header-center-container {
+  margin: auto;
+}
+
+h1 {
+  float: left;
+  font-size: 3.0em;
+  padding: 10px;
+  /* text-align: center; */
+}
+
+img#title-image {
+  /* text-align: center; */
+  clear: left;
+  width: 200px;
+}
+
+section#description {
+  margin-bottom: 30px;
+}
+
+section#description img {
+  float: left;
+  margin-right: 10px;
+  width: 300px;
+}
+
+section#description p {
+  margin: 10px;
+  padding: 5px;
+}
+
+img.location-image {
+  margin-left: 10px;
+  width: 100px;
+}
+
+section#locations h3 {
+  font-size: 1.5em;
+}
+
+section#locations {
+  display: inline;
 }
 
 table#sales-data-table {
