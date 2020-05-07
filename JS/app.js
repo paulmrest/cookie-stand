@@ -15,6 +15,8 @@ function CookieStore(storeLocation, locationHoursOpen, minCustPerHour, maxCustPe
   this.populateHoursOpen();
   this.simulateCustPerHour();
   this.simulateCookiesPerHour();
+
+  allCookieStores.push(this);
 }
 
 CookieStore.prototype.populateHoursOpen = function() {
@@ -260,10 +262,12 @@ function convert24To12HrTime(hourTime24Hour) {
 }
 
 //executables
+
+//since all the locations have the same opening and closing time, setting these as constants
 const openingTime24Hr = 600; //6 am in 24 hour time
 const closingTime24Hr = 2000; //8 pm in 24 hour time
 
-//array to hold all cookieStore objects
+//array to hold all CookieStore objects
 var allCookieStores = new Array();
 
 //since all the branches have the same hours open, we can use the same HoursOpen object for every location
@@ -273,19 +277,10 @@ var allLocationsHoursOpen = new HoursOpen(openingTime24Hr, closingTime24Hr);
 renderTableHeaderRow(allLocationsHoursOpen);
 
 var seattleStore = new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3);
-allCookieStores.push(seattleStore);
-
 var tokyoStore = new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2);
-allCookieStores.push(tokyoStore);
-
 var dubaiStore = new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7);
-allCookieStores.push(dubaiStore);
-
 var parisStore = new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3);
-allCookieStores.push(parisStore);
-
 var limaStore = new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6);
-allCookieStores.push(limaStore);
 
 seattleStore.renderAsTable();
 tokyoStore.renderAsTable();
