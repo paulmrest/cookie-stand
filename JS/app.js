@@ -164,7 +164,7 @@ HoursOpen.convert24To12HrTime = function(hourTime24Hour) {
 /*
 Renders the header row using a HoursOpen object.
 */
-function renderTableHeaderRow(hoursOpen) {
+function renderTableHeaderRow(allLocationsHoursOpen) {
   //create a pointer at sales-data element
   var salesDataEl = document.getElementById('sales-data');
 
@@ -187,12 +187,12 @@ function renderTableHeaderRow(hoursOpen) {
   blankTableHeader.setAttribute('id', 'blank-table-header');
   tableRowEl.appendChild(blankTableHeader);
 
-  //create the th elements for each hoursOpen and append it to the table row
-  for (var i = 0; i < hoursOpen.hoursOpenArray.length; i++)
+  //create the th elements for each element in allLocationsHoursOpen.hoursOpenArray and append it to the table row
+  for (var i = 0; i < allLocationsHoursOpen.hoursOpenArray.length; i++)
   {
     var oneOpenHourEl = document.createElement('th');
     oneOpenHourEl.setAttribute('scope', 'col');
-    oneOpenHourEl.innerText = convert24To12HrTime(hoursOpen.hoursOpenArray[i]);
+    oneOpenHourEl.innerText = convert24To12HrTime(allLocationsHoursOpen.hoursOpenArray[i]);
     tableRowEl.appendChild(oneOpenHourEl);
   }
 
@@ -207,7 +207,7 @@ function renderTableHeaderRow(hoursOpen) {
 Renders the footer row.
 This function requires that all CookieStore objects that will be rendered are instantiated and added to the allCookieStores global array before rendering the table.
 */
-function renderTableFooterRow() {
+function renderTableFooterRow(allLocationsHoursOpen) {
   var newElementParent = document.getElementById('sales-data-table');
   var totalsRowEl = document.createElement('tr');
   totalsRowEl.setAttribute('id', 'hour-totals-row');
@@ -219,8 +219,8 @@ function renderTableFooterRow() {
   totalsHeadEl.innerText = 'Totals';
   newElementParent.appendChild(totalsHeadEl);
 
-  var everyLocationHoursOpen = (closingTime24Hr - openingTime24Hr) / 100;
-  for (var i = 0; i <= everyLocationHoursOpen; i++)
+  // var everyLocationHoursOpen = (closingTime24Hr - openingTime24Hr) / 100;
+  for (var i = 0; i < allLocationsHoursOpen.hoursOpenArray.length; i++)
   {
     var hourTotal = 0;
     for (var j = 0; j < allCookieStores.length; j++)
@@ -288,4 +288,4 @@ dubaiStore.renderAsTable();
 parisStore.renderAsTable();
 limaStore.renderAsTable();
 
-renderTableFooterRow();
+renderTableFooterRow(allLocationsHoursOpen);
