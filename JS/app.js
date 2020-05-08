@@ -1,9 +1,18 @@
 'use-strict';
 
+//global variables
+//since all the locations have the same opening and closing time, setting these as constants
+const openingTime24Hr = 600; //6 am in 24 hour time
+const closingTime24Hr = 2000; //8 pm in 24 hour time
+
+//array to hold all CookieStore objects
+var allCookieStores = new Array();
+
 //CookieStore constructor and methods
 function CookieStore(
   storeLocation, locationHoursOpen, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
-  this.storeLocation = storeLocation;
+  //normalize store location name
+  this.storeLocation = capitalizeFirstLetterOfString(storeLocation);
   this.locationHoursOpen = locationHoursOpen;
   this.minCustPerHour = minCustPerHour;
   this.maxCustPerHour = maxCustPerHour;
@@ -266,6 +275,8 @@ function handleCookieStoreFormData(event) {
   event.preventDefault();
 
   var newLocationName = event.target[1].value;
+  //normalize newLocationName
+  newLocationName = capitalizeFirstLetterOfString(newLocationName);
   var newLocationCustMin = parseInt(event.target[2].value, 10);
   var newLocationCustMax = parseInt(event.target[3].value, 10);
   var newLocationCookiesPerCust = parseInt(event.target[4].value, 10);
@@ -325,15 +336,11 @@ function refreshTable() {
   renderTableFooterRow(allLocationsHoursOpen);
 }
 
+function capitalizeFirstLetterOfString(aString) {
+  return aString.charAt(0).toUpperCase() + aString.slice(1);
+}
+
 //executables
-
-//since all the locations have the same opening and closing time, setting these as constants
-const openingTime24Hr = 600; //6 am in 24 hour time
-const closingTime24Hr = 2000; //8 pm in 24 hour time
-
-//array to hold all CookieStore objects
-var allCookieStores = new Array();
-
 //since all the branches have the same hours open, we can use the same HoursOpen object for every location
 var allLocationsHoursOpen = new HoursOpen(openingTime24Hr, closingTime24Hr);
 
