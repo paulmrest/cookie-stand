@@ -337,11 +337,11 @@ var allCookieStores = new Array();
 //since all the branches have the same hours open, we can use the same HoursOpen object for every location
 var allLocationsHoursOpen = new HoursOpen(openingTime24Hr, closingTime24Hr);
 
-new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3, true);
-new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2, true);
-new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7, true);
-new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3, true);
-new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6, true);
+new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3);
+new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2);
+new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7);
+new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3);
+new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6);
 
 refreshTable();
 
