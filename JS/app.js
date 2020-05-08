@@ -1,7 +1,8 @@
 'use-strict';
 
 //CookieStore constructor and methods
-function CookieStore(storeLocation, locationHoursOpen, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
+function CookieStore(
+  storeLocation, locationHoursOpen, minCustPerHour, maxCustPerHour, avgCookiesPerSale) {
   this.storeLocation = storeLocation;
   this.locationHoursOpen = locationHoursOpen;
   this.minCustPerHour = minCustPerHour;
@@ -16,8 +17,28 @@ function CookieStore(storeLocation, locationHoursOpen, minCustPerHour, maxCustPe
   this.simulateCustPerHour();
   this.simulateCookiesPerHour();
 
-  allCookieStores.push(this);
+  CookieStore.addToAllCookieStores(this);
 }
+
+//class method
+//checks if another store with the same name already exists
+//if so, replaces that object, if not, pushes it onto the end of the array
+CookieStore.addToAllCookieStores = function(newCookieStore) {
+  var pushNewStore = true;
+  for (var i = 0; i < allCookieStores.length; i++)
+  {
+    if (allCookieStores[i].storeLocation === newCookieStore.storeLocation)
+    {
+      pushNewStore = false;
+      allCookieStores.splice(i, 1, newCookieStore);
+      break;
+    }
+  }
+  if (pushNewStore)
+  {
+    allCookieStores.push(newCookieStore);
+  }
+};
 
 CookieStore.prototype.populateHoursOpen = function() {
   const totalHoursOpen = Math.abs(closingTime24Hr - openingTime24Hr) / 100;
@@ -160,7 +181,7 @@ HoursOpen.convert24To12HrTime = function(hourTime24Hour) {
 };
 
 
-//non-instance functions
+//non-class functions
 /*
 Renders the header row using a HoursOpen object.
 */
@@ -219,7 +240,6 @@ function renderTableFooterRow(allLocationsHoursOpen) {
   totalsHeadEl.innerText = 'Totals';
   newElementParent.appendChild(totalsHeadEl);
 
-  // var everyLocationHoursOpen = (closingTime24Hr - openingTime24Hr) / 100;
   for (var i = 0; i < allLocationsHoursOpen.hoursOpenArray.length; i++)
   {
     var hourTotal = 0;
@@ -235,6 +255,36 @@ function renderTableFooterRow(allLocationsHoursOpen) {
 
   //empty td element at the end to fill out grid
   newElementParent.appendChild(document.createElement('td'));
+}
+
+function setupEventListeners() {
+  var newLocationForm = document.getElementById('new-location-form');
+  newLocationForm.addEventListener('submit', handleCookieStoreFormData);
+}
+
+function handleCookieStoreFormData(event) {
+  event.preventDefault();
+
+  var newLocationName = event.target[1].value;
+  var newLocationCustMin = parseInt(event.target[2].value, 10);
+  var newLocationCustMax = parseInt(event.target[3].value, 10);
+  var newLocationCookiesPerCust = parseInt(event.target[4].value, 10);
+
+  if (newLocationCustMin < 0 || newLocationCustMin < 0)
+  {
+    alert('Minimum and maximum customers per hour need to both be zero or greater.');
+  }
+  else if (newLocationCustMin > newLocationCustMax)
+  {
+    alert('Maximum number of customers must be greater or equal to minimum.');
+  }
+  else
+  {
+    new CookieStore(
+      newLocationName, allLocationsHoursOpen, newLocationCustMin, newLocationCustMax, newLocationCookiesPerCust);
+    refreshTable();
+    document.getElementById('new-location-form').reset();
+  }
 }
 
 //utility functions
@@ -261,6 +311,20 @@ function convert24To12HrTime(hourTime24Hour) {
   }
 }
 
+function refreshTable() {
+  //remove all child nodes under our root sales-data node
+  var salesDataEl = document.getElementById('sales-data');
+  while (salesDataEl.firstChild) {
+    salesDataEl.removeChild(salesDataEl.firstChild);
+  }
+  //render table
+  renderTableHeaderRow(allLocationsHoursOpen);
+  for (var i = 0; i < allCookieStores.length; i++) {
+    allCookieStores[i].renderAsTable();
+  }
+  renderTableFooterRow(allLocationsHoursOpen);
+}
+
 //executables
 
 //since all the locations have the same opening and closing time, setting these as constants
@@ -273,19 +337,12 @@ var allCookieStores = new Array();
 //since all the branches have the same hours open, we can use the same HoursOpen object for every location
 var allLocationsHoursOpen = new HoursOpen(openingTime24Hr, closingTime24Hr);
 
-//use the above instantiated HoursOpen object to render the header row
-renderTableHeaderRow(allLocationsHoursOpen);
+new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3, true);
+new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2, true);
+new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7, true);
+new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3, true);
+new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6, true);
 
-var seattleStore = new CookieStore('Seattle', allLocationsHoursOpen, 25, 65, 6.3);
-var tokyoStore = new CookieStore('Tokyo', allLocationsHoursOpen, 3, 24, 1.2);
-var dubaiStore = new CookieStore('Dubai', allLocationsHoursOpen, 11, 38, 3.7);
-var parisStore = new CookieStore('Paris', allLocationsHoursOpen, 20, 38, 2.3);
-var limaStore = new CookieStore('Lima', allLocationsHoursOpen, 2, 16, 4.6);
+refreshTable();
 
-seattleStore.renderAsTable();
-tokyoStore.renderAsTable();
-dubaiStore.renderAsTable();
-parisStore.renderAsTable();
-limaStore.renderAsTable();
-
-renderTableFooterRow(allLocationsHoursOpen);
+setupEventListeners();
