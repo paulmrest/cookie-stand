@@ -8,28 +8,27 @@
   <link rel="stylesheet" href="CSS/style.css" type="text/css">
 </head>
 <body>
+  <div id="sales-data"></div>
   <section id="new-location-section">
     <h2>Cookie Store Generator</h2>
     <form id="new-location-form">
       <fieldset>
         <label>Location
-          <input type="text" required name="location-name">
+          <input type="text" name="location-name" required>
         </label>
         <label>Estimated Minimum Customers Per Hour
-          <input type="number" required name="location-cust-min">
+          <input type="number" name="location-cust-min" required>
         </label>
         <label>Estimated Maximum Customers Per Hour
-          <input type="number" required name="location-cust-max">
+          <input type="number" name="location-cust-max" required>
         </label>
         <label>Estimated Cookies Purchased Per Customer
-          <input type="number" required name="location-cookies-per-cust">
+          <input type="number" name="location-cookies-per-cust" required>
         </label>
-        <!-- <input type="submit" name="create" value="submit"> -->
         <button id="new-location-submit">Submit</button>
       </fieldset>
     </form>
   </section>
-  <div id="sales-data"></div>
 </body>
 <script src="JS/app.js"></script>
 </html>
